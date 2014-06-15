@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Fancy Lists</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/foundation.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/foundation-icons.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/application.css" />
+        <script src="/static/js/vendor/modernizr.js"></script>
+    </head>
+    <body>
+
+        <div class="contain-to-grid fixed">
+            <nav class="top-bar" data-topbar>
+                <ul class="title-area">
+                    <li class="name">
+                        <h1><a href="#">SudoCool</a></h1>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        {% block content %}{% endblock %}
+
+        <hr />
+        <footer>
+            <div class="row">
+                <div class="large-12 columns">
+                    <p>&copy; {% now "Y" %} - SudoCool</p>
+                </div>
+            </div>
+        </footer>
+        
+        <script src="/static/js/vendor/jquery.js"></script>
+        <script src="/static/js/foundation.min.js"></script> 
+        <script>
+          $(document).foundation();
+        </script>
+        <script src="/static/js/jquery-ui-1.10.4.js"></script>
+        <script src="/static/js/application.js"></script> 
+    </body>
+</html>

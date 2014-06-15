@@ -1,0 +1,111 @@
+html {
+    overflow-y: scroll; 
+}
+
+.sortable-item-placeholder {
+    background-color: gainsboro;
+    padding: 10px 0px 10px 0px;
+}
+
+.sortable-category-placeholder {
+    background-color: gainsboro;
+    margin: 0px 0px 10px 0px;
+    padding: 10px;
+    width: 100%;
+    min-width: 300px;
+}
+
+div.loginContainer {
+
+}
+
+/*
+    List Styles
+ */
+div.fancylist {
+    width: 100%;
+    min-width: 300px;
+}
+
+div.fancylist > h1.listTitle {
+    display: inline-block;
+}
+
+div.fancylist > p.listDescription {
+    
+}
+
+div.fancylist > span.removeList {
+    padding-left: 10px;
+}
+
+div.fancylist > div.addCategory {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+/*
+    Category Styles
+ */
+div.categoryContainer {
+    text-align: center;
+}
+
+div.category {
+    border: 1px solid black;
+    margin: 0px 0px 10px 0px;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    background-color: white;
+}
+
+div.category > form.reorderCategoryForm {
+    display: none;
+}
+
+div.category > h3.categoryTitle {
+    display: inline-block;
+}
+
+div.category > span.removeCategory {
+    padding-left: 10px;
+}
+
+div.category > span.showHideCategory {
+    float: right;
+}
+
+div.category > span.remove-category > form.removeCategoryForm {
+    display: inline;
+}
+
+div.category > div.categoryContents > div.addItem {
+
+}
+
+div.category > div.categoryContents > div.addItem > form.addItemForm {
+
+}
+
+div.category > div.categoryContents > div.itemContainer > div.item {
+    padding: 10px 0px 10px 0px;
+    background-color: white;
+}
+
+div.category > div.categoryContents > div.itemContainer > div.item > form.reorderItemForm {
+    display: none;
+}
+
+div.category > div.categoryContents > div.itemContainer > div.item > span.itemName {
+    padding: 0px 10px 0px 10px;
+}
+
+div.category > div.categoryContents > div.itemContainer > div.item > span.removeItem {
+
+}
+
+div.category > div.categoryContents > div.itemContainer > div.item > span.removeItem > form.removeItemForm {
+    display: inline;
+}
