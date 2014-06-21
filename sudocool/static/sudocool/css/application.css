@@ -1,111 +1,62 @@
-html {
-    overflow-y: scroll; 
-}
-
-.sortable-item-placeholder {
-    background-color: gainsboro;
-    padding: 10px 0px 10px 0px;
-}
-
-.sortable-category-placeholder {
-    background-color: gainsboro;
-    margin: 0px 0px 10px 0px;
-    padding: 10px;
-    width: 100%;
-    min-width: 300px;
-}
-
-div.loginContainer {
-
-}
-
-/*
-    List Styles
- */
-div.fancylist {
-    width: 100%;
-    min-width: 300px;
-}
-
-div.fancylist > h1.listTitle {
+div.sudocoolContainer {
+    margin: 0px;
+    padding: 0px;
     display: inline-block;
 }
 
-div.fancylist > p.listDescription {
-    
+div.sudocoolContainer > div.sudocoolTable {
+    margin: 0px;
+    padding: 0px;
+    display: inline-block;
 }
 
-div.fancylist > span.removeList {
-    padding-left: 10px;
+div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow {
+    margin: 0px;
+    padding: 0px;
+    display: inline-block;
 }
 
-div.fancylist > div.addCategory {
-    padding-top: 10px;
-    padding-bottom: 10px;
+div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol {
+    margin: 10px;
+    padding: 0px;
+    display: inline-block;
+    float: left;
 }
 
-
-/*
-    Category Styles
- */
-div.categoryContainer {
-    text-align: center;
+div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol > input {
+    margin: 0px;
+    padding: 0px;
 }
 
-div.category {
+/*table.sudocoolTable {
+    border-collapse: collapse;
     border: 1px solid black;
-    margin: 0px 0px 10px 0px;
-    padding: 10px;
-    width: 100%;
-    text-align: left;
-    background-color: white;
+    margin: 0px;
+    padding: 0px;
 }
 
-div.category > form.reorderCategoryForm {
-    display: none;
+table.sudocoolTable > tbody > tr,
+table.sudocoolTable > tr {
+    margin: 0px;
+    padding: 0px;
 }
 
-div.category > h3.categoryTitle {
-    display: inline-block;
+table.sudocoolTable > tbody > tr > td,
+table.sudocoolTable > tr > td {
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    border: 1px solid black;
 }
 
-div.category > span.removeCategory {
-    padding-left: 10px;
+table.sudocoolTable > tbody > tr > td > div,
+table.sudocoolTable > tr > td > div {
+    padding: 0px;
+    margin: 0px;
 }
 
-div.category > span.showHideCategory {
-    float: right;
-}
-
-div.category > span.remove-category > form.removeCategoryForm {
-    display: inline;
-}
-
-div.category > div.categoryContents > div.addItem {
-
-}
-
-div.category > div.categoryContents > div.addItem > form.addItemForm {
-
-}
-
-div.category > div.categoryContents > div.itemContainer > div.item {
-    padding: 10px 0px 10px 0px;
-    background-color: white;
-}
-
-div.category > div.categoryContents > div.itemContainer > div.item > form.reorderItemForm {
-    display: none;
-}
-
-div.category > div.categoryContents > div.itemContainer > div.item > span.itemName {
-    padding: 0px 10px 0px 10px;
-}
-
-div.category > div.categoryContents > div.itemContainer > div.item > span.removeItem {
-
-}
-
-div.category > div.categoryContents > div.itemContainer > div.item > span.removeItem > form.removeItemForm {
-    display: inline;
-}
+table.sudocoolTable > tbody > tr > td > div > input,
+table.sudocoolTable > tr > td > div > input {
+    padding: 0px;
+    margin: 0px;
+}*/
