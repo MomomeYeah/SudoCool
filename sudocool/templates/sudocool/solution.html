@@ -1,0 +1,14 @@
+{% extends "SudoCool/base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 columns">
+            <h1>Here's the Solution!</h1>
+            <div class="sudocoolContainer">
+                <input type="hidden" id="solutionString" value="{{ solution }}"/>
+                {% include "sudocool/_sudocooltable.html" %}
+                <a href="{% url 'sudocool:index' %}" class="button">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

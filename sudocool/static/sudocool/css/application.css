@@ -23,6 +23,10 @@ div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol {
     float: left;
 }
 
+div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.badCol {
+    border: 2px solid red;
+}
+
 div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol > input {
     margin: 0px;
     padding: 0px;

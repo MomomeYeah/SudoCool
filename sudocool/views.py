@@ -1,8 +1,6 @@
-from django.shortcuts import render
-#from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404, render, redirect
 
+from sudocool.models import SudocoolBoard
 from sudocool.forms import SolveForm
 
 def index(request):
@@ -13,5 +11,10 @@ def solve(request):
         form = SolveForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            sudocoolData = cd['sudocoolData']
-    return HttpResponseRedirect(reverse('sudocool:index'))
+            board = SudocoolBoard.objects.create_sudocoolboard(cd['sudocoolData'])
+            return redirect('sudocool:solution', board.id)
+    return redirect('sudocool:index')
+
+def solution(request, sudocoolboard_id):
+    solution = get_object_or_404(SudocoolBoard, pk = sudocoolboard_id)
+    return render(request, 'sudocool/solution.html', {'range': range(9), 'solution': solution})

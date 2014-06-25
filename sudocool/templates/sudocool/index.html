@@ -7,17 +7,7 @@
             <p>Enter your board below to get started</p>
             <form id="solveSudocoolForm" action="{% url 'sudocool:solve' %}" method="post">
                 <div class="sudocoolContainer">
-                    <div class="sudocoolTable">
-                        {% for i in range %}
-                            <div class="sudocoolRow">
-                                {% for j in range %}
-                                    <div class="sudocoolCol small-1 columns">
-                                        <input class="sudocoolItem" type="text"/>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    </div>
+                    {% include "sudocool/_sudocooltable.html" %}
                     {% csrf_token %}
                     <input type="submit" value="Solve" class="button"/>
                 </div>
