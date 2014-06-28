@@ -12,6 +12,9 @@ var
 sdist
 develop-eggs
 .installed.cfg
+
+# TODO File
+sudoku.txt
  
 # Installer logs
 pip-log.txt
