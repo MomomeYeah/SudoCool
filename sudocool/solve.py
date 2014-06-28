@@ -21,7 +21,16 @@ class square(object):
             for i in self.possibilities: ret_str += str(i)+","
         return ret_str
 
-class row(object):
+    def removePossibility(self, possibility):
+        if not self.solved and possibility in self.possibilities:
+            self.possibilities.remove(possibility)
+
+    def solve(self, possibility):
+        self.solved = True
+        self.value = possibility
+        self.possibilities = None
+
+class rowColOrSection(object):
     def __init__(self, index):
         self.index = index
         self.possibilities = [1,2,3,4,5,6,7,8,9]
@@ -34,167 +43,136 @@ class row(object):
     def __eq__(self, index):
         return self.index == index
 
-class col(object):
-    def __init__(self, index):
-        self.index = index
-        self.possibilities = [1,2,3,4,5,6,7,8,9]
+    def removePossibility(self, possibility):
+        if possibility in self.possibilities:
+            self.possibilities.remove(possibility)
 
-    def __str__(self):
-        ret_str = "Index: "+str(self.index)+", Possibilities: "
-        for i in self.possibilities: ret_str += str(i)+","
-        return ret_str
-
-    def __eq__(self, index):
-        return self.index == index
-
-class section(object):
-    def __init__(self, index):
-        self.index = index
-        self.possibilities = [1,2,3,4,5,6,7,8,9]
-
-    def __str__(self):
-        ret_str = "Index: "+str(self.index)+", Possibilities: "
-        for i in self.possibilities: ret_str += str(i)+","
-        return ret_str
-
-    def __eq__(self, index):
-        return self.index == index
-
-class board(object):
-    def __init__(self, sudocooldata):
-        self.squares = []
+class rowList(object):
+    def __init__(self):
         self.rows = []
+        for i in range(9):
+            self.rows.append(rowColOrSection(i))
+
+    def removePossibility(self, index, possibility):
+        r = self.rows[self.rows.index(index)]
+        r.removePossibility(possibility)
+
+class colList(object):
+    def __init__(self):
         self.cols = []
+        for i in range(9):
+            self.cols.append(rowColOrSection(i))
+
+    def removePossibility(self, index, possibility):
+        c = self.cols[self.cols.index(index)]
+        c.removePossibility(possibility)
+
+class sectionList(object):
+    def __init__(self):
         self.sections = []
         for i in range(9):
-            self.rows.append(row(i))
-            self.cols.append(col(i))
-            self.sections.append(section(i))
+            self.sections.append(rowColOrSection(i))
+
+    def removePossibility(self, index, possibility):
+        s = self.sections[self.sections.index(index)]
+        s.removePossibility(possibility)
+
+class squareList(object):
+    def __init__(self, sudocooldata):
+        self.squares = []
         i = 0
         for val in sudocooldata.split(','):
             self.squares.append(square(math.floor(i/9), i%9, val))
             i += 1
+    def removePossibility(self, row, col, section, possibility):
+        for square in self.squares:
+            if square.row == row or square.col == col or square.section == section:
+                square.removePossibility(possibility)
+
+    def solveAndRemovePossibility(self, row, col, section, possibility):
+        for square in self.squares:
+            if square.row == row and square.col == col:
+                square.solve(possibility)
+            elif square.row == row and not square.col == col:
+                square.removePossibility(possibility)
+            elif not square.row == row and square.col == col:
+                square.removePossibility(possibility)
+            elif not square.row == row and not square.col == col and square.section == section:
+                square.removePossibility(possibility)
+
+class board(object):
+    def __init__(self, sudocooldata):
+        self.squareList = squareList(sudocooldata)
+        self.rowList = rowList()
+        self.colList = colList()
+        self.sectionList = sectionList()
 
     def setupBoard(self):
-        for square in self.squares:
+        for square in self.squareList.squares:
             if square.solved:
-                r = self.rows[self.rows.index(square.row)]
-                if square.value in r.possibilities: r.possibilities.remove(square.value)
-
-                c = self.cols[self.cols.index(square.col)]
-                if square.value in c.possibilities: c.possibilities.remove(square.value)
-
-                s = self.sections[self.sections.index(square.section)]
-                if square.value in s.possibilities: s.possibilities.remove(square.value)
-
-                for square_remove in self.squares:
-                    if square_remove.row == square.row or square_remove.col == square.col or square_remove.section == square.section:
-                        if not square_remove.solved and square.value in square_remove.possibilities:
-                            square_remove.possibilities.remove(square.value)
+                self.rowList.removePossibility(square.row, square.value)
+                self.colList.removePossibility(square.col, square.value)
+                self.sectionList.removePossibility(square.section, square.value)
+                self.squareList.removePossibility(square.row, square.col, square.section, square.value)
 
     def checkRows(self):
         found = False
-        for row in self.rows:
+        for row in self.rowList.rows:
             for possibility in row.possibilities:
                 count = 0
                 col = 0
                 section = 0
-                for square in self.squares:
+                for square in self.squareList.squares:
                     if square.row == row.index and square.solved == False and possibility in square.possibilities:
                         count += 1
                         col = square.col
                         section = square.section
                 if count == 1:
                     found = True
-                    row.possibilities.remove(possibility)
-                    for sq in self.squares:
-                        if sq.row == row.index and sq.col == col:
-                            sq.solved = True
-                            sq.value = possibility
-                            sq.possibilities = None
-                        elif not sq.solved:
-                            if sq.row == row.index and not sq.col == col and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                            elif not sq.row == row.index and sq.col == col and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                            elif not sq.row == row.index and not sq.col == col and sq.section == section and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                    for col_remove in self.cols:
-                        if col_remove.index == col:
-                            col_remove.possibilities.remove(possibility)
-                    for section_remove in self.sections:
-                        if section_remove.index == section:
-                            section_remove.possibilities.remove(possibility)
+                    row.removePossibility(possibility)
+                    self.squareList.solveAndRemovePossibility(row.index, col, section, possibility)
+                    self.colList.removePossibility(col, possibility)
+                    self.sectionList.removePossibility(section, possibility)
         return found
 
     def checkCols(self):
         found = False
-        for col in self.cols:
+        for col in self.colList.cols:
             for possibility in col.possibilities:
                 count = 0
                 row = 0
                 section = 0
-                for square in self.squares:
+                for square in self.squareList.squares:
                     if square.col == col.index and square.solved == False and possibility in square.possibilities:
                         count += 1
                         row = square.row
                         section = square.section
                 if count == 1:
                     found = True
-                    col.possibilities.remove(possibility)
-                    for sq in self.squares:
-                        if sq.row == row and sq.col == col.index:
-                            sq.solved = True
-                            sq.value = possibility
-                            sq.possibilities = None
-                        elif not sq.solved:
-                            if sq.row == row and not sq.col == col.index and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                            elif not sq.row == row and sq.col == col.index and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                            elif not sq.row == row and not sq.col == col.index and sq.section == section and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                    for row_remove in self.rows:
-                        if row_remove.index == row:
-                            row_remove.possibilities.remove(possibility)
-                    for section_remove in self.sections:
-                        if section_remove.index == section:
-                            section_remove.possibilities.remove(possibility)
+                    col.removePossibility(possibility)
+                    self.squareList.solveAndRemovePossibility(row, col.index, section, possibility)
+                    self.rowList.removePossibility(row, possibility)
+                    self.sectionList.removePossibility(section, possibility)
         return found
 
     def checkSections(self):
         found = False
-        for section in self.sections:
+        for section in self.sectionList.sections:
             for possibility in section.possibilities:
                 count = 0
                 row = 0
                 col = 0
-                for square in self.squares:
+                for square in self.squareList.squares:
                     if square.section == section.index and square.solved == False and possibility in square.possibilities:
                         count += 1
                         row = square.row
                         col = square.col
                 if count == 1:
                     found = True
-                    section.possibilities.remove(possibility)
-                    for sq in self.squares:
-                        if sq.row == row and sq.col == col:
-                            sq.solved = True
-                            sq.value = possibility
-                            sq.possibilities = None
-                        elif not sq.solved:
-                            if sq.row == row and not sq.col == col and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                            elif not sq.row == row and sq.col == col and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                            elif not sq.row == row and not sq.col == col and sq.section == section.index and possibility in sq.possibilities:
-                                sq.possibilities.remove(possibility)
-                    for row_remove in self.rows:
-                        if row_remove.index == row:
-                            row_remove.possibilities.remove(possibility)
-                    for col_remove in self.cols:
-                        if col_remove.index == col:
-                            col_remove.possibilities.remove(possibility)
+                    section.removePossibility(possibility)
+                    self.squareList.solveAndRemovePossibility(row, col, section.index, possibility)
+                    self.rowList.removePossibility(row, possibility)
+                    self.colList.removePossibility(col, possibility)
         return found
 
     def solveBoard(self):
@@ -224,6 +202,6 @@ class board(object):
 
     def printBoard(self):
         ret_str = ""
-        for s in self.squares:
+        for s in self.squareList.squares:
             ret_str += str(s.value)+","
         return ret_str
