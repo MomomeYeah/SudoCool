@@ -8,6 +8,7 @@ div.sudocoolContainer > div.sudocoolTable {
     margin: 0px;
     padding: 0px;
     display: inline-block;
+    min-width: 400px;
 }
 
 div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow {
@@ -17,8 +18,8 @@ div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow {
 }
 
 div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol {
-    margin: 10px;
-    padding: 0px;
+    margin: 0px;
+    padding: 0px 1px 0px 0px;
     display: inline-block;
     float: left;
 }
@@ -30,37 +31,5 @@ div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.badCol {
 div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol > input {
     margin: 0px;
     padding: 0px;
+    text-align: center;
 }
-
-/*table.sudocoolTable {
-    border-collapse: collapse;
-    border: 1px solid black;
-    margin: 0px;
-    padding: 0px;
-}
-
-table.sudocoolTable > tbody > tr,
-table.sudocoolTable > tr {
-    margin: 0px;
-    padding: 0px;
-}
-
-table.sudocoolTable > tbody > tr > td,
-table.sudocoolTable > tr > td {
-    margin: 0px;
-    padding: 0px;
-    float: left;
-    border: 1px solid black;
-}
-
-table.sudocoolTable > tbody > tr > td > div,
-table.sudocoolTable > tr > td > div {
-    padding: 0px;
-    margin: 0px;
-}
-
-table.sudocoolTable > tbody > tr > td > div > input,
-table.sudocoolTable > tr > td > div > input {
-    padding: 0px;
-    margin: 0px;
-}*/

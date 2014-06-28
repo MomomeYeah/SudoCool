@@ -7,6 +7,8 @@
             <div class="sudocoolContainer">
                 <input type="hidden" id="solutionString" value="{{ solution }}"/>
                 {% include "sudocool/_sudocooltable.html" %}
+                <br/>
+                <br/>
                 <a href="{% url 'sudocool:index' %}" class="button">Back</a>
             </div>
         </div>

@@ -8,6 +8,8 @@
             <form id="solveSudocoolForm" action="{% url 'sudocool:solve' %}" method="post">
                 <div class="sudocoolContainer">
                     {% include "sudocool/_sudocooltable.html" %}
+                    <br/>
+                    <br/>
                     {% csrf_token %}
                     <input type="submit" value="Solve" class="button"/>
                 </div>
