@@ -193,7 +193,7 @@ class board(object):
     # For each possibility in each section, look at all cells in that section containing that possibility
     # If all such cells fall on a single row or column, that row or column in that section must contain that possibility
     # Therefore, we can remove that possibility from cells in the same row or column in other sections 
-    def eliminateRowColPossibilitiesFromSection(self):
+    def candidateLine(self):
         found = False
         for section in self.sectionList.sections:
             for possibility in section.possibilities:
@@ -219,6 +219,37 @@ class board(object):
                             square.removePossibility(possibility)
         return found
 
+    # For each row, look through all squares in that row
+    # If any two have exactly the same two possibilities, only those two squares in that row can contain those two possibilities
+    # Therefore, remove those two possibilities from all other squares in that row
+    def nakedPairs(self):
+        found = False
+        for row in self.rowList.rows:
+            possibilities = None
+            for square in self.squareList.squares:
+                if square.row == row.index and square.solved == False and len(square.possibilities) == 2:
+                    if possibilities == None:
+                        possibilities = square.possibilities
+                    elif possibilities == square.possibilities:
+                        for square_remove in self.squareList.squares:
+                            if square_remove.row == row.index and square_remove.solved == False and len(square_remove.possibilities) != 2:
+                                found = True
+                                for possibility in possibilities:
+                                    square_remove.removePossibility(possibility)
+        for col in self.colList.cols:
+            possibilities = None
+            for square in self.squareList.squares:
+                if square.col == col.index and square.solved == False and len(square.possibilities) == 2:
+                    if possibilities == None:
+                        possibilities = square.possibilities
+                    elif possibilities == square.possibilities:
+                        for square_remove in self.squareList.squares:
+                            if square_remove.col == col.index and square_remove.solved == False and len(square_remove.possibilities) != 2:
+                                found = True
+                                for possibility in possibilities:
+                                    square_remove.removePossibility(possibility)
+        return found
+
     def solveBoard(self):
         found = True
         while found:
@@ -231,7 +262,9 @@ class board(object):
             if not found:
                 found = self.checkSections()
             if not found:
-                found = self.eliminateRowColPossibilitiesFromSection()
+                found = self.candidateLine()
+            if not found:
+                found = self.nakedPairs()
             
     def __str__(self):
         ret_str = "Rows:\n"
