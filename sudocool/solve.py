@@ -115,6 +115,19 @@ class board(object):
                 self.sectionList.removePossibility(square.section, square.value)
                 self.squareList.removePossibility(square.row, square.col, square.section, square.value)
 
+    # If a cell has only one possibility, solve that cell
+    def checkSingleValues(self):
+        found = False
+        for square in self.squareList.squares:
+            if not square.solved and len(square.possibilities) == 1:
+                found = True
+                self.rowList.removePossibility(square.row, square.possibilities[0])
+                self.colList.removePossibility(square.col, square.possibilities[0])
+                self.sectionList.removePossibility(square.section, square.possibilities[0])
+                self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, square.possibilities[0])
+        return found
+
+    # For each possibility in each row, if there is only one cell in that row containing that possibility, solve that cell
     def checkRows(self):
         found = False
         for row in self.rowList.rows:
@@ -135,6 +148,7 @@ class board(object):
                     self.sectionList.removePossibility(section, possibility)
         return found
 
+    # For each possibility in each col, if there is only one cell in that col containing that possibility, solve that cell
     def checkCols(self):
         found = False
         for col in self.colList.cols:
@@ -155,6 +169,7 @@ class board(object):
                     self.sectionList.removePossibility(section, possibility)
         return found
 
+    # For each possibility in each section, if there is only one cell in that section containing that possibility, solve that cell
     def checkSections(self):
         found = False
         for section in self.sectionList.sections:
@@ -175,28 +190,61 @@ class board(object):
                     self.colList.removePossibility(col, possibility)
         return found
 
+    # For each possibility in each section, look at all cells in that section containing that possibility
+    # If all such cells fall on a single row or column, that row or column in that section must contain that possibility
+    # Therefore, we can remove that possibility from cells in the same row or column in other sections 
+    def eliminateRowColPossibilitiesFromSection(self):
+        found = False
+        for section in self.sectionList.sections:
+            for possibility in section.possibilities:
+                rows = []
+                for square in self.squareList.squares:
+                    if square.section == section.index and square.solved == False and possibility in square.possibilities:
+                        if square.row not in rows:
+                            rows.append(square.row)
+                if len(rows) == 1:
+                    for square in self.squareList.squares:
+                        if square.row == rows[0] and square.section != section.index and not square.solved and possibility in square.possibilities:
+                            found = True
+                            square.removePossibility(possibility)
+                cols = []
+                for square in self.squareList.squares:
+                    if square.section == section.index and square.solved == False and possibility in square.possibilities:
+                        if square.col not in cols:
+                            cols.append(square.col)
+                if len(cols) == 1:
+                    for square in self.squareList.squares:
+                        if square.col == cols[0] and square.section != section.index and not square.solved and possibility in square.possibilities:
+                            found = True
+                            square.removePossibility(possibility)
+        return found
+
     def solveBoard(self):
         found = True
         while found:
             found = False
-            found = self.checkRows()
+            found = self.checkSingleValues()
+            if not found:
+                found = self.checkRows()
             if not found:
                 found = self.checkCols()
             if not found:
                 found = self.checkSections()
+            if not found:
+                found = self.eliminateRowColPossibilitiesFromSection()
             
     def __str__(self):
         ret_str = "Rows:\n"
-        for r in self.rows:
+        for r in self.rowList.rows:
             ret_str += str(r)+"\n"
         ret_str += "Cols:\n"
-        for c in self.cols:
+        for c in self.colList.cols:
             ret_str += str(c)+"\n"
         ret_str += "Sections:\n"
-        for s in self.sections:
+        for s in self.sectionList.sections:
             ret_str += str(s)+"\n"
         ret_str += "Squares:\n"
-        for s in self.squares:
+        for s in self.squareList.squares:
             ret_str += str(s)+"\n"
         return ret_str
 
