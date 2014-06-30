@@ -30,6 +30,9 @@ class square(object):
         self.value = possibility
         self.possibilities = None
 
+    def hasPossibility(self, possibility):
+        return self.solved == False and possibility in self.possibilities
+
 class rowColOrSection(object):
     def __init__(self, index):
         self.index = index
@@ -132,52 +135,34 @@ class board(object):
         found = False
         for row in self.rowList.rows:
             for possibility in row.possibilities:
-                count = 0
-                col = 0
-                section = 0
-                for square in self.squareList.squares:
-                    if square.row == row.index and square.solved == False and possibility in square.possibilities:
-                        count += 1
-                        col = square.col
-                        section = square.section
-                if count == 1:
+                squares = [square for i, square in enumerate(self.squareList.squares) if square.row == row.index and square.hasPossibility(possibility)]
+                if len(squares) == 1:
                     found = True
+                    square = squares[0]
                     row.removePossibility(possibility)
-                    self.squareList.solveAndRemovePossibility(row.index, col, section, possibility)
-                    self.colList.removePossibility(col, possibility)
-                    self.sectionList.removePossibility(section, possibility)
+                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+                    self.colList.removePossibility(square.col, possibility)
+                    self.sectionList.removePossibility(square.section, possibility)
         for col in self.colList.cols:
             for possibility in col.possibilities:
-                count = 0
-                row = 0
-                section = 0
-                for square in self.squareList.squares:
-                    if square.col == col.index and square.solved == False and possibility in square.possibilities:
-                        count += 1
-                        row = square.row
-                        section = square.section
-                if count == 1:
+                squares = [square for i, square in enumerate(self.squareList.squares) if square.col == col.index and square.hasPossibility(possibility)]
+                if len(squares) == 1:
                     found = True
+                    square = squares[0]
                     col.removePossibility(possibility)
-                    self.squareList.solveAndRemovePossibility(row, col.index, section, possibility)
-                    self.rowList.removePossibility(row, possibility)
-                    self.sectionList.removePossibility(section, possibility)
+                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+                    self.rowList.removePossibility(square.row, possibility)
+                    self.sectionList.removePossibility(square.section, possibility)
         for section in self.sectionList.sections:
             for possibility in section.possibilities:
-                count = 0
-                row = 0
-                col = 0
-                for square in self.squareList.squares:
-                    if square.section == section.index and square.solved == False and possibility in square.possibilities:
-                        count += 1
-                        row = square.row
-                        col = square.col
-                if count == 1:
+                squares = [square for i, square in enumerate(self.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)]
+                if len(squares) == 1:
                     found = True
+                    square = squares[0]
                     section.removePossibility(possibility)
-                    self.squareList.solveAndRemovePossibility(row, col, section.index, possibility)
-                    self.rowList.removePossibility(row, possibility)
-                    self.colList.removePossibility(col, possibility)
+                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+                    self.rowList.removePossibility(square.row, possibility)
+                    self.colList.removePossibility(square.col, possibility)
         return found
 
     # For each possibility in each section, look at all cells in that section containing that possibility
@@ -189,22 +174,22 @@ class board(object):
             for possibility in section.possibilities:
                 rows = []
                 for square in self.squareList.squares:
-                    if square.section == section.index and square.solved == False and possibility in square.possibilities:
+                    if square.section == section.index and square.hasPossibility(possibility):
                         if square.row not in rows:
                             rows.append(square.row)
                 if len(rows) == 1:
                     for square in self.squareList.squares:
-                        if square.row == rows[0] and square.section != section.index and not square.solved and possibility in square.possibilities:
+                        if square.row == rows[0] and square.section != section.index and square.hasPossibility(possibility):
                             found = True
                             square.removePossibility(possibility)
                 cols = []
                 for square in self.squareList.squares:
-                    if square.section == section.index and square.solved == False and possibility in square.possibilities:
+                    if square.section == section.index and square.hasPossibility(possibility):
                         if square.col not in cols:
                             cols.append(square.col)
                 if len(cols) == 1:
                     for square in self.squareList.squares:
-                        if square.col == cols[0] and square.section != section.index and not square.solved and possibility in square.possibilities:
+                        if square.col == cols[0] and square.section != section.index and square.hasPossibility(possibility):
                             found = True
                             square.removePossibility(possibility)
         return found
