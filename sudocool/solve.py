@@ -33,6 +33,9 @@ class square(object):
     def hasPossibility(self, possibility):
         return self.solved == False and possibility in self.possibilities
 
+    def hasPartialIntersect(self, possibilities):
+        return self.possibilities != possibilities and set(self.possibilities) & set(possibilities)
+
 class rowColOrSection(object):
     def __init__(self, index):
         self.index = index
@@ -207,7 +210,7 @@ class board(object):
                         possibilities = square.possibilities
                     elif possibilities == square.possibilities:
                         for square_remove in self.squareList.squares:
-                            if square_remove.row == row.index and square_remove.solved == False and not square_remove.possibilities == possibilities:
+                            if square_remove.row == row.index and square_remove.solved == False and square_remove.hasPartialIntersect(possibilities):
                                 found = True
                                 for possibility in possibilities:
                                     square_remove.removePossibility(possibility)
@@ -219,7 +222,7 @@ class board(object):
                         possibilities = square.possibilities
                     elif possibilities == square.possibilities:
                         for square_remove in self.squareList.squares:
-                            if square_remove.col == col.index and square_remove.solved == False and not square_remove.possibilities == possibilities:
+                            if square_remove.col == col.index and square_remove.solved == False and square_remove.hasPartialIntersect(possibilities):
                                 found = True
                                 for possibility in possibilities:
                                     square_remove.removePossibility(possibility)
@@ -231,7 +234,7 @@ class board(object):
                         possibilities = square.possibilities
                     elif possibilities == square.possibilities:
                         for square_remove in self.squareList.squares:
-                            if square_remove.section == section.index and square_remove.solved == False and not square_remove.possibilities == possibilities:
+                            if square_remove.section == section.index and square_remove.solved == False and square_remove.hasPartialIntersect(possibilities):
                                 found = True
                                 for possibility in possibilities:
                                     square_remove.removePossibility(possibility)
