@@ -175,26 +175,16 @@ class board(object):
         found = False
         for section in self.sectionList.sections:
             for possibility in section.possibilities:
-                rows = []
-                for square in self.squareList.squares:
-                    if square.section == section.index and square.hasPossibility(possibility):
-                        if square.row not in rows:
-                            rows.append(square.row)
+                rows = set([square.row for i, square in enumerate(self.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
                 if len(rows) == 1:
-                    for square in self.squareList.squares:
-                        if square.row == rows[0] and square.section != section.index and square.hasPossibility(possibility):
-                            found = True
-                            square.removePossibility(possibility)
-                cols = []
-                for square in self.squareList.squares:
-                    if square.section == section.index and square.hasPossibility(possibility):
-                        if square.col not in cols:
-                            cols.append(square.col)
+                    for remove_square in [square for i, square in enumerate(self.squareList.squares) if square.section != section.index and square.row in rows and square.hasPossibility(possibility)]:
+                        found = True
+                        remove_square.removePossibility(possibility)
+                cols = set([square.col for i, square in enumerate(self.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
                 if len(cols) == 1:
-                    for square in self.squareList.squares:
-                        if square.col == cols[0] and square.section != section.index and square.hasPossibility(possibility):
-                            found = True
-                            square.removePossibility(possibility)
+                    for remove_square in [square for i, square in enumerate(self.squareList.squares) if square.section != section.index and square.col in cols and square.hasPossibility(possibility)]:
+                        found = True
+                        remove_square.removePossibility(possibility)
         return found
 
     # For each row/col/section, look through all squares in that row/col/section
