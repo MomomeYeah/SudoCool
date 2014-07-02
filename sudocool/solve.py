@@ -12,7 +12,7 @@ class square(object):
         else:
             self.value = ''
             self.solved = False
-            self.possibilities = [1,2,3,4,5,6,7,8,9]
+            self.possibilities = range(1,10)
 
     def __str__(self):
         ret_str = "Row: "+str(self.row)+", Col: "+str(self.col)+", Section: "+str(self.section)
@@ -24,6 +24,10 @@ class square(object):
     def removePossibility(self, possibility):
         if not self.solved and possibility in self.possibilities:
             self.possibilities.remove(possibility)
+
+    def removePossibilities(self, possibilities):
+        for possibility in possibilities:
+            self.removePossibility(possibility)
 
     def solve(self, possibility):
         self.solved = True
@@ -39,7 +43,7 @@ class square(object):
 class rowColOrSection(object):
     def __init__(self, index):
         self.index = index
-        self.possibilities = [1,2,3,4,5,6,7,8,9]
+        self.possibilities = range(1,10)
 
     def __str__(self):
         ret_str = "Index: "+str(self.index)+", Possibilities: "
@@ -188,46 +192,32 @@ class board(object):
         return found
 
     # For each row/col/section, look through all squares in that row/col/section
-    # If any two have exactly the same two possibilities, only those two squares in that row/col/section can contain those two possibilities
-    # Therefore, remove those two possibilities from all other squares in that row/col/section
-    def nakedPairs(self):
+    # If any N squares have exactly the same N possibilities, only those N squares in that row/col/section can contain those N possibilities
+    # For example if two square share the same two possibilities, those two squares must contain those two possibilities, and no other squares in that row can have either possibility
+    # Therefore, remove those N possibilities from all other squares in that row/col/section
+    def nakedTuples(self):
         found = False
         for row in self.rowList.rows:
-            possibilities = None
-            for square in self.squareList.squares:
-                if square.row == row.index and square.solved == False and len(square.possibilities) == 2:
-                    if possibilities == None:
-                        possibilities = square.possibilities
-                    elif possibilities == square.possibilities:
-                        for square_remove in self.squareList.squares:
-                            if square_remove.row == row.index and square_remove.solved == False and square_remove.hasPartialIntersect(possibilities):
-                                found = True
-                                for possibility in possibilities:
-                                    square_remove.removePossibility(possibility)
+            for test_square in [square for i, square in enumerate(self.squareList.squares) if square.row == row.index and not square.solved]:
+                match_squares = [square for i, square in enumerate(self.squareList.squares) if square.row == row.index and not square.solved and square.possibilities == test_square.possibilities]
+                if len(match_squares) == len(test_square.possibilities):
+                    for remove_square in [square for i, square in enumerate(self.squareList.squares) if square.row == row.index and not square.solved and square.hasPartialIntersect(test_square.possibilities)]:
+                        found = True
+                        remove_square.removePossibilities(test_square.possibilities)
         for col in self.colList.cols:
-            possibilities = None
-            for square in self.squareList.squares:
-                if square.col == col.index and square.solved == False and len(square.possibilities) == 2:
-                    if possibilities == None:
-                        possibilities = square.possibilities
-                    elif possibilities == square.possibilities:
-                        for square_remove in self.squareList.squares:
-                            if square_remove.col == col.index and square_remove.solved == False and square_remove.hasPartialIntersect(possibilities):
-                                found = True
-                                for possibility in possibilities:
-                                    square_remove.removePossibility(possibility)
+            for test_square in [square for i, square in enumerate(self.squareList.squares) if square.col == col.index and not square.solved]:
+                match_squares = [square for i, square in enumerate(self.squareList.squares) if square.col == col.index and not square.solved and square.possibilities == test_square.possibilities]
+                if len(match_squares) == len(test_square.possibilities):
+                    for remove_square in [square for i, square in enumerate(self.squareList.squares) if square.col == col.index and not square.solved and square.hasPartialIntersect(test_square.possibilities)]:
+                        found = True
+                        remove_square.removePossibilities(test_square.possibilities)
         for section in self.sectionList.sections:
-            possibilities = None
-            for square in self.squareList.squares:
-                if square.section == section.index and square.solved == False and len(square.possibilities) == 2:
-                    if possibilities == None:
-                        possibilities = square.possibilities
-                    elif possibilities == square.possibilities:
-                        for square_remove in self.squareList.squares:
-                            if square_remove.section == section.index and square_remove.solved == False and square_remove.hasPartialIntersect(possibilities):
-                                found = True
-                                for possibility in possibilities:
-                                    square_remove.removePossibility(possibility)
+            for test_square in [square for i, square in enumerate(self.squareList.squares) if square.section == section.index and not square.solved]:
+                match_squares = [square for i, square in enumerate(self.squareList.squares) if square.section == section.index and not square.solved and square.possibilities == test_square.possibilities]
+                if len(match_squares) == len(test_square.possibilities):
+                    for remove_square in [square for i, square in enumerate(self.squareList.squares) if square.section == section.index and not square.solved and square.hasPartialIntersect(test_square.possibilities)]:
+                        found = True
+                        remove_square.removePossibilities(test_square.possibilities)
         return found
 
     def solveBoard(self):
@@ -240,7 +230,7 @@ class board(object):
             if not found:
                 found = self.candidateLine()
             if not found:
-                found = self.nakedPairs()
+                found = self.nakedTuples()
             
     def __str__(self):
         ret_str = "Rows:\n"
