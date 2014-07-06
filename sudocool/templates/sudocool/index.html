@@ -4,8 +4,19 @@
     <div class="row">
         <div class="large-12 columns">
             <h1>Welcome to SudoCool!</h1>
-            <p>Enter your board below to get started</p>
+            <form id="getSudokuForm" action="{% url 'sudocool:puzzle' %}" method="post">
+                <div class="row collapse">
+                    {% csrf_token %}
+                    <div class="small-11 columns">
+                        <input id="puzzleURL" name="puzzleURL" type="text" placeholder="Enter URL to get puzzle"/>
+                    </div>
+                    <div class="small-1 columns">
+                        <input type="submit" value="Get" class="button postfix"/>
+                    </div>
+                </div>
+            </form>
             <form id="solveSudocoolForm" action="{% url 'sudocool:solve' %}" method="post">
+                <input type="hidden" id="puzzleString" value="{{ puzzle }}"/>
                 <div class="sudocoolContainer">
                     {% include "sudocool/_sudocooltable.html" %}
                     <br/>

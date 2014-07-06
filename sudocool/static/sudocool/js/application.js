@@ -4,6 +4,19 @@ function isValidSudokuNumber(n) {
     return !isNaN(num) && num === Math.floor(num) && n > 0 && n <= 9;
 }
 
+function populatePuzzle() {
+    var puzzleString = $("#puzzleString").val();
+    if(typeof puzzleString !== "undefined" && puzzleString !== '') {
+        var puzzleItems = puzzleString.split(',');
+        var sudocoolCells = $(".sudocoolItem");
+        $.each(sudocoolCells, function(i, value) {
+            if(puzzleItems[i] != '0') {
+                $(this).val(puzzleItems[i]);
+            }
+        })
+    }
+}
+
 function populateSolution() {
     var solutionString = $("#solutionString").val();
     if(typeof solutionString !== "undefined" && solutionString !== '') {
@@ -16,6 +29,7 @@ function populateSolution() {
 }
 
 $(document).ready(function() {
+    populatePuzzle();
     populateSolution();
 
     $("#solveSudocoolForm").submit(function(event) {
