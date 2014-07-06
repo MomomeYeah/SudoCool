@@ -57,6 +57,24 @@ class rowColOrSection(object):
         if possibility in self.possibilities:
             self.possibilities.remove(possibility)
 
+class section(rowColOrSection):
+    def __init__(self, index):
+        rowColOrSection.__init__(self, index)
+        self.rowIndex = int(math.floor(index / 3))
+        self.colIndex = index % 3
+
+    def __str__(self):
+        ret_str = "Index: "+str(self.index)+", Row Index: "+str(self.rowIndex)+", Col Index: "+str(self.colIndex)+", Possibilities: "
+        for i in self.possibilities: ret_str += str(i)+","
+        return ret_str
+
+    def __eq__(self, index):
+        return self.index == index
+
+    def removePossibility(self, possibility):
+        if possibility in self.possibilities:
+            self.possibilities.remove(possibility)
+
 class rowList(object):
     def __init__(self):
         self.rows = []
@@ -81,7 +99,7 @@ class sectionList(object):
     def __init__(self):
         self.sections = []
         for i in range(9):
-            self.sections.append(rowColOrSection(i))
+            self.sections.append(section(i))
 
     def removePossibility(self, index, possibility):
         s = self.sections[self.sections.index(index)]
@@ -191,6 +209,35 @@ class board(object):
                         remove_square.removePossibility(possibility)
         return found
 
+    # For each pair of sections in the same section-row or section-col, look at each possibility in turn that they have in common
+    # Look for a possibility that occurs in exactly two rows (for a section-row) or cols (for a section-col), and the same two rows/cols in both sections
+    # If such a possibility exists, it must occur in those two rows/cols in those two sections
+    # Therefore, remove it from those two rows/cols in the third section in that section-row/col 
+    def doublePair(self):
+        found = False
+        for section in self.sectionList.sections:
+            for test_section in [s for i, s in enumerate(self.sectionList.sections) if s.rowIndex == section.rowIndex and s.colIndex != section.colIndex]:
+                cols = [section.colIndex, test_section.colIndex]
+                for possibility in section.possibilities:
+                    s_rows = set([square.row for i, square in enumerate(self.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
+                    ts_rows = set([square.row for i, square in enumerate(self.squareList.squares) if square.section == test_section.index and square.hasPossibility(possibility)])
+                    if len(s_rows) == 2 and s_rows == ts_rows:
+                        for remove_sections in [s for i, s in enumerate(self.sectionList.sections) if s.rowIndex == section.rowIndex and not s.colIndex in cols]:
+                            for remove_squares in [s for i, s in enumerate(self.squareList.squares) if s.section == remove_sections.index and s.row in s_rows and s.hasPossibility(possibility)]:
+                                found = True
+                                remove_squares.removePossibility(possibility)
+            for test_section in [s for i, s in enumerate(self.sectionList.sections) if s.colIndex == section.colIndex and s.rowIndex != section.rowIndex]:
+                rows = [section.rowIndex, test_section.rowIndex]
+                for possibility in section.possibilities:
+                    s_cols = set([square.col for i, square in enumerate(self.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
+                    ts_cols = set([square.col for i, square in enumerate(self.squareList.squares) if square.section == test_section.index and square.hasPossibility(possibility)])
+                    if len(s_cols) == 2 and s_cols == ts_cols:
+                        for remove_sections in [s for i, s in enumerate(self.sectionList.sections) if s.colIndex == section.colIndex and not s.rowIndex in rows]:
+                            for remove_squares in [s for i, s in enumerate(self.squareList.squares) if s.section == remove_sections.index and s.col in s_cols and s.hasPossibility(possibility)]:
+                                found = True
+                                remove_squares.removePossibility(possibility)
+        return found
+
     # For each row/col/section, look through all squares in that row/col/section
     # If any N squares have exactly the same N possibilities, only those N squares in that row/col/section can contain those N possibilities
     # For example if two square share the same two possibilities, those two squares must contain those two possibilities, and no other squares in that row can have either possibility
@@ -229,6 +276,8 @@ class board(object):
                 found = self.singlePosition()
             if not found:
                 found = self.candidateLine()
+            if not found:
+                found = self.doublePair()
             if not found:
                 found = self.nakedTuples()
             
