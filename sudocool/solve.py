@@ -1,4 +1,5 @@
 import math
+import copy
 
 class square(object):
     def __init__(self, row, col, value):
@@ -17,7 +18,7 @@ class square(object):
     def __str__(self):
         ret_str = "Row: "+str(self.row)+", Col: "+str(self.col)+", Section: "+str(self.section)
         ret_str += ", Value: "+str(self.value)+", Solved: "+str(self.solved)+", "
-        if not self.solved:
+        if self.possibilities:
             for i in self.possibilities: ret_str += str(i)+","
         return ret_str
 
@@ -53,6 +54,9 @@ class rowColOrSection(object):
     def __eq__(self, index):
         return self.index == index
 
+    def solved(self):
+        return len(self.possibilities) == 0
+
     def removePossibility(self, possibility):
         if possibility in self.possibilities:
             self.possibilities.remove(possibility)
@@ -68,13 +72,6 @@ class section(rowColOrSection):
         for i in self.possibilities: ret_str += str(i)+","
         return ret_str
 
-    def __eq__(self, index):
-        return self.index == index
-
-    def removePossibility(self, possibility):
-        if possibility in self.possibilities:
-            self.possibilities.remove(possibility)
-
 class rowList(object):
     def __init__(self):
         self.rows = []
@@ -84,6 +81,10 @@ class rowList(object):
     def removePossibility(self, index, possibility):
         r = self.rows[self.rows.index(index)]
         r.removePossibility(possibility)
+
+    def solved(self):
+        unsolved_rows = [row for i, row in enumerate(self.rows) if not row.solved()]
+        return len(unsolved_rows) == 0
 
 class colList(object):
     def __init__(self):
@@ -95,6 +96,10 @@ class colList(object):
         c = self.cols[self.cols.index(index)]
         c.removePossibility(possibility)
 
+    def solved(self):
+        unsolved_cols = [col for i, col in enumerate(self.cols) if not col.solved()]
+        return len(unsolved_cols) == 0
+
 class sectionList(object):
     def __init__(self):
         self.sections = []
@@ -104,6 +109,10 @@ class sectionList(object):
     def removePossibility(self, index, possibility):
         s = self.sections[self.sections.index(index)]
         s.removePossibility(possibility)
+
+    def solved(self):
+        unsolved_sections = [section for i, section in enumerate(self.sections) if not section.solved()]
+        return len(unsolved_sections) == 0
 
 class squareList(object):
     def __init__(self, sudocooldata):
@@ -134,6 +143,15 @@ class board(object):
         self.rowList = rowList()
         self.colList = colList()
         self.sectionList = sectionList()
+
+    # has the board been solved?
+    def solved(self):
+        return self.rowList.solved() and self.colList.solved() and self.sectionList.solved()
+
+    # is the board in an inconsistent state, i.e. are there any squares with no possibilities left that aren't solved?
+    def inconsistent(self):
+        unsolved_squares = [square for i, square in enumerate(self.squareList.squares) if not square.solved and len(square.possibilities) == 0]
+        return len(unsolved_squares) > 0
 
     def setupBoard(self):
         for square in self.squareList.squares:
@@ -267,7 +285,7 @@ class board(object):
                         remove_square.removePossibilities(test_square.possibilities)
         return found
 
-    def solveBoard(self):
+    def solveRound(self):
         found = True
         while found:
             found = False
@@ -280,6 +298,38 @@ class board(object):
                 found = self.doublePair()
             if not found:
                 found = self.nakedTuples()
+
+    def guess(self):
+        unsolved_squares = [square for i, square in enumerate(self.squareList.squares) if not square.solved]
+        for square in unsolved_squares:
+            for possibility in square.possibilities:
+                b_working = copy.deepcopy(self)
+                b_working.rowList.removePossibility(square.row, possibility)
+                b_working.colList.removePossibility(square.col, possibility)
+                b_working.sectionList.removePossibility(square.section, possibility)
+                b_working.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+                possibility_correct = b_working.solveBoard()
+                if possibility_correct:
+                    self.rowList.removePossibility(square.row, possibility)
+                    self.colList.removePossibility(square.col, possibility)
+                    self.sectionList.removePossibility(square.section, possibility)
+                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+                    return True
+                else:
+                    square.removePossibility(possibility)
+        return False
+
+    def solveBoard(self):
+        self.solveRound()
+
+        if self.solved():
+            return True
+        elif self.inconsistent():
+            return False
+
+        result = True
+        while result:
+            result = self.guess()
             
     def __str__(self):
         ret_str = "Rows:\n"
