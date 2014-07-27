@@ -3,7 +3,7 @@ SudoCool
 
 Tired of manually solving Sudoku puzzles?  Haven't realised that half the internet is sudoku?  Then SudoCool is the project for you!
 
-This is mostly a learning experience to learn Django and Python.  I haven't got the faintest idea what I'm doing, and that will become clear if you look at the code closely enough!
+This is mostly a learning experience to learn Django and Python.  I haven't got the faintest idea what I'm doing.
 
 TODO
 ----
