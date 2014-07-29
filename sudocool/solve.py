@@ -19,7 +19,7 @@ class square(object):
         ret_str = "Row: "+str(self.row)+", Col: "+str(self.col)+", Section: "+str(self.section)
         ret_str += ", Value: "+str(self.value)+", Solved: "+str(self.solved)+", "
         if self.possibilities:
-            for i in self.possibilities: ret_str += str(i)+","
+            ret_str += ",".join(str(i) for i in self.possibilities)
         return ret_str
 
     def removePossibility(self, possibility):
@@ -47,9 +47,7 @@ class rowColOrSection(object):
         self.possibilities = range(1,10)
 
     def __str__(self):
-        ret_str = "Index: "+str(self.index)+", Possibilities: "
-        for i in self.possibilities: ret_str += str(i)+","
-        return ret_str
+        return "Index: "+str(self.index)+", Possibilities: "+",".join(str(i) for i in self.possibilities)
 
     def __eq__(self, index):
         return self.index == index
@@ -68,9 +66,7 @@ class section(rowColOrSection):
         self.colIndex = index % 3
 
     def __str__(self):
-        ret_str = "Index: "+str(self.index)+", Row Index: "+str(self.rowIndex)+", Col Index: "+str(self.colIndex)+", Possibilities: "
-        for i in self.possibilities: ret_str += str(i)+","
-        return ret_str
+        return "Index: "+str(self.index)+", Row Index: "+str(self.rowIndex)+", Col Index: "+str(self.colIndex)+", Possibilities: "+",".join(str(i) for i in self.possibilities)
 
 class rowList(object):
     def __init__(self):
@@ -153,6 +149,12 @@ class board(object):
         unsolved_squares = [square for i, square in enumerate(self.squareList.squares) if not square.solved and len(square.possibilities) == 0]
         return len(unsolved_squares) > 0
 
+    def solveSquare(self, square, possibility):
+        self.rowList.removePossibility(square.row, possibility)
+        self.colList.removePossibility(square.col, possibility)
+        self.sectionList.removePossibility(square.section, possibility)
+        self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+
     def setupBoard(self):
         for square in self.squareList.squares:
             if square.solved:
@@ -167,10 +169,7 @@ class board(object):
         for square in self.squareList.squares:
             if not square.solved and len(square.possibilities) == 1:
                 found = True
-                self.rowList.removePossibility(square.row, square.possibilities[0])
-                self.colList.removePossibility(square.col, square.possibilities[0])
-                self.sectionList.removePossibility(square.section, square.possibilities[0])
-                self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, square.possibilities[0])
+                self.solveSquare(square, square.possibilities[0])
         return found
 
     # For each possibility in each row/col/section, if there is only one cell in that row/col/section containing that possibility, solve that cell
@@ -181,31 +180,19 @@ class board(object):
                 squares = [square for i, square in enumerate(self.squareList.squares) if square.row == row.index and square.hasPossibility(possibility)]
                 if len(squares) == 1:
                     found = True
-                    square = squares[0]
-                    row.removePossibility(possibility)
-                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
-                    self.colList.removePossibility(square.col, possibility)
-                    self.sectionList.removePossibility(square.section, possibility)
+                    self.solveSquare(squares[0], possibility)
         for col in self.colList.cols:
             for possibility in col.possibilities:
                 squares = [square for i, square in enumerate(self.squareList.squares) if square.col == col.index and square.hasPossibility(possibility)]
                 if len(squares) == 1:
                     found = True
-                    square = squares[0]
-                    col.removePossibility(possibility)
-                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
-                    self.rowList.removePossibility(square.row, possibility)
-                    self.sectionList.removePossibility(square.section, possibility)
+                    self.solveSquare(squares[0], possibility)
         for section in self.sectionList.sections:
             for possibility in section.possibilities:
                 squares = [square for i, square in enumerate(self.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)]
                 if len(squares) == 1:
                     found = True
-                    square = squares[0]
-                    section.removePossibility(possibility)
-                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
-                    self.rowList.removePossibility(square.row, possibility)
-                    self.colList.removePossibility(square.col, possibility)
+                    self.solveSquare(squares[0], possibility)
         return found
 
     # For each possibility in each section, look at all cells in that section containing that possibility
@@ -304,16 +291,9 @@ class board(object):
         for square in unsolved_squares:
             for possibility in square.possibilities:
                 b_working = copy.deepcopy(self)
-                b_working.rowList.removePossibility(square.row, possibility)
-                b_working.colList.removePossibility(square.col, possibility)
-                b_working.sectionList.removePossibility(square.section, possibility)
-                b_working.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
-                possibility_correct = b_working.solveBoard()
-                if possibility_correct:
-                    self.rowList.removePossibility(square.row, possibility)
-                    self.colList.removePossibility(square.col, possibility)
-                    self.sectionList.removePossibility(square.section, possibility)
-                    self.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
+                b_working.solveSquare(square, possibility)
+                if b_working.solveBoard():
+                    self.solveSquare(square, possibility)
                     return True
                 else:
                     square.removePossibility(possibility)
@@ -332,22 +312,15 @@ class board(object):
             result = self.guess()
             
     def __str__(self):
-        ret_str = "Rows:\n"
-        for r in self.rowList.rows:
-            ret_str += str(r)+"\n"
-        ret_str += "Cols:\n"
-        for c in self.colList.cols:
-            ret_str += str(c)+"\n"
-        ret_str += "Sections:\n"
-        for s in self.sectionList.sections:
-            ret_str += str(s)+"\n"
-        ret_str += "Squares:\n"
-        for s in self.squareList.squares:
-            ret_str += str(s)+"\n"
+        ret_str = "\nRows:\n\n"
+        ret_str += "\n".join(str(r) for r in self.rowList.rows)
+        ret_str += "\n\nCols:\n\n"
+        ret_str += "\n".join(str(c) for c in self.colList.cols)
+        ret_str += "\n\nSections:\n\n"
+        ret_str += "\n".join(str(s) for s in self.sectionList.sections)
+        ret_str += "\n\nSquares:\n\n"
+        ret_str += "\n".join(str(s) for s in self.squareList.squares)
         return ret_str
 
     def printBoard(self):
-        ret_str = ""
-        for s in self.squareList.squares:
-            ret_str += str(s.value)+","
-        return ret_str
+        return ",".join(str(s.value) for s in self.squareList.squares)
