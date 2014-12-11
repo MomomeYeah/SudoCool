@@ -9,10 +9,11 @@ https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
 
 from django.core.wsgi import get_wsgi_application
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 if os.environ.get('DEPLOY_ENVIRONMENT') == 'heroku':
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sudocool.settings.production")
     from dj_static import Cling
     application = Cling(get_wsgi_application())
 else:
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sudocool.settings.local")
     application = get_wsgi_application()
