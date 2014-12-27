@@ -16,3 +16,6 @@ TODO
 * Store separate board for each update or just list of increments?
 * Click particular tiles to see their answer, rather than seeing them all at once?
 * Create puzzle with id/uuid for future reference
+* URL entry field should be URL type, i.e. .com button for mobile
+* Manual entry boxes should be number type
+* AJAX URL fetch
