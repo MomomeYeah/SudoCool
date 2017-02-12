@@ -3,7 +3,6 @@
 {% block content %}
     <div class="row">
         <div class="large-12 columns">
-            <h1>Welcome to SudoCool!</h1>
             <form id="getSudokuForm" action="{% url 'sudocool:puzzle' %}" method="post">
                 <div class="row collapse">
                     {% csrf_token %}

@@ -21,7 +21,9 @@
             </nav>
         </div>
 
-        {% block content %}{% endblock %}
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
 
         <hr />
         <footer>
@@ -31,13 +33,13 @@
                 </div>
             </div>
         </footer>
-        
+
         <script src="/static/js/vendor/jquery.js"></script>
-        <script src="/static/js/foundation.min.js"></script> 
+        <script src="/static/js/foundation.min.js"></script>
         <script>
           $(document).foundation();
         </script>
         <script src="/static/js/jquery-ui-1.10.4.js"></script>
-        <script src="/static/js/application.js"></script> 
+        <script src="/static/js/application.js"></script>
     </body>
 </html>
