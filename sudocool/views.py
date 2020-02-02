@@ -31,13 +31,13 @@ def solution(request, sudocoolboard_id):
 def puzzle(request):
     if request.method == 'POST':
         form = GetPuzzleForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            try:
-                html = urllib2.urlopen(cd['puzzleURL']).read()
-                index = html.find("var iGridUnsolved= new Array(")+len("var iGridUnsolved= new Array(")
-                array = html[index:index+161]
-                return redirect('sudocool:index', array)
-            except (ValueError):
-                return redirect('sudocool:index')
+        if not form.is_valid():
+            form.cleaned_data["puzzleURL"] = "http://sudoku.com.au"
+        try:
+            html = urllib2.urlopen(form.cleaned_data["puzzleURL"]).read()
+            index = html.find("var iGridUnsolved= new Array(")+len("var iGridUnsolved= new Array(")
+            array = html[index:index+161]
+            return redirect('sudocool:index', array)
+        except (ValueError):
+            return redirect('sudocool:index')
     return redirect('sudocool:index')
