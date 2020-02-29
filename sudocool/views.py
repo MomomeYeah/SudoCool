@@ -1,4 +1,4 @@
-import urllib2
+import requests
 
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -34,7 +34,7 @@ def puzzle(request):
         if not form.is_valid():
             form.cleaned_data["puzzleURL"] = "http://sudoku.com.au"
         try:
-            html = urllib2.urlopen(form.cleaned_data["puzzleURL"]).read()
+            html = requests.get(form.cleaned_data["puzzleURL"]).text
             index = html.find("var iGridUnsolved= new Array(")+len("var iGridUnsolved= new Array(")
             array = html[index:index+161]
             return redirect('sudocool:index', array)

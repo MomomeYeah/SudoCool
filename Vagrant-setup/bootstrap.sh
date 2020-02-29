@@ -20,16 +20,13 @@ apt-get install -y libapache2-mod-wsgi
 # Git
 apt-get install -y git
 
-# Python
-apt-get install -y python-dev
-apt-get install -y python-setuptools
-easy_install pip
+# Python 3
+apt-get install -y python3-dev
+apt-get install -y python3-pip
+apt-get install -y python3-psycopg2
 
 # Postgres
 apt-get install -y "postgresql-$POSTGRES_VERSION" "postgresql-contrib-$POSTGRES_VERSION"
-
-# python/postgres bindings/drivers:
-apt-get install -y python-psycopg2
 
 apt-get install -y libpq-dev
 
@@ -38,8 +35,8 @@ apt-get install -y node
 apt-get install -y npm
 
 # install bower and gulp globally
-npm install -g bower
-npm install -g gulp
+# npm install -g bower
+# npm install -g gulp
 
 # On Ubuntu, "node" is used for something other than node.js
 # Do some jiggery-pokery
@@ -93,10 +90,10 @@ CREATE DATABASE $APP_DB_NAME WITH OWNER=$APP_DB_USER ENCODING='UTF8' TEMPLATE=te
 EOF
 
 # install Django requirements and run makemigrations and migrate
-sudo pip install -r /vagrant/requirements.txt
+sudo pip3 install -r /vagrant/requirements.txt
 chmod u+x /vagrant/manage.py
-sudo python /vagrant/manage.py makemigrations
-sudo python /vagrant/manage.py migrate
+sudo python3 /vagrant/manage.py makemigrations
+sudo python3 /vagrant/manage.py migrate
 
 # install node dependencies and run post install
 su vagrant << EOF
@@ -105,7 +102,7 @@ EOF
 
 # create super user
 echo "Creating superuser..."
-cat << EOF | python /vagrant/manage.py shell
+cat << EOF | python3 /vagrant/manage.py shell
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 try:

@@ -13,7 +13,7 @@ class square(object):
         else:
             self.value = ''
             self.solved = False
-            self.possibilities = range(1,10)
+            self.possibilities = list(range(1,10))
 
     def __str__(self):
         ret_str = "Row: "+str(self.row)+", Col: "+str(self.col)+", Section: "+str(self.section)
@@ -44,7 +44,7 @@ class square(object):
 class rowColOrSection(object):
     def __init__(self, index):
         self.index = index
-        self.possibilities = range(1,10)
+        self.possibilities = list(range(1,10))
 
     def __str__(self):
         return "Index: "+str(self.index)+", Possibilities: "+",".join(str(i) for i in self.possibilities)
@@ -197,7 +197,7 @@ class board(object):
 
     # For each possibility in each section, look at all cells in that section containing that possibility
     # If all such cells fall on a single row or column, that row or column in that section must contain that possibility
-    # Therefore, we can remove that possibility from cells in the same row or column in other sections 
+    # Therefore, we can remove that possibility from cells in the same row or column in other sections
     def candidateLine(self):
         found = False
         for section in self.sectionList.sections:
@@ -217,7 +217,7 @@ class board(object):
     # For each pair of sections in the same section-row or section-col, look at each possibility in turn that they have in common
     # Look for a possibility that occurs in exactly two rows (for a section-row) or cols (for a section-col), and the same two rows/cols in both sections
     # If such a possibility exists, it must occur in those two rows/cols in those two sections
-    # Therefore, remove it from those two rows/cols in the third section in that section-row/col 
+    # Therefore, remove it from those two rows/cols in the third section in that section-row/col
     def doublePair(self):
         found = False
         for section in self.sectionList.sections:
@@ -310,7 +310,7 @@ class board(object):
         result = True
         while result:
             result = self.guess()
-            
+
     def __str__(self):
         ret_str = "\nRows:\n\n"
         ret_str += "\n".join(str(r) for r in self.rowList.rows)
