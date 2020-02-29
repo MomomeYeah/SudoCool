@@ -1,6 +1,8 @@
 # General
 
 * Get secret key from os.environ
+* fix python3 manage.py makemigrations
+* fix python3 manage.py migrate
 
 # UI
 
