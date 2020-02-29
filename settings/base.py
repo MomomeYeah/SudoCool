@@ -21,8 +21,6 @@ SECRET_KEY = '^(=k=mz_c-*)c(xl-^87($zm0$um+#!au+$1g+b&xw-(nkb%+^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -48,7 +46,22 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
+TEMPLATES = [
+    {
+        "APP_DIRS": True,
+        "BACKEND": 'django.template.backends.django.DjangoTemplates',
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+            "debug": True,
+        },
+    },
+]
 
 STATIC_FOUNDATION = os.path.join(os.path.join(BASE_DIR, 'static'), 'foundation')
 STATIC_SUDOCOOL = os.path.join(os.path.join(os.path.join(BASE_DIR, 'sudocool'), 'static'), 'sudocool')
