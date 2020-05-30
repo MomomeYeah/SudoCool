@@ -16,7 +16,7 @@
             </form>
             <form id="solveSudocoolForm" action="{% url 'sudocool:solve' %}" method="post">
                 <input type="hidden" id="puzzleString" value="{{ puzzle }}"/>
-                <div class="sudocoolContainer">
+                <div class="sudocool-container">
                     {% include "sudocool/_sudocooltable.html" %}
                     <br/>
                     <br/>

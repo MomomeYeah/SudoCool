@@ -21,7 +21,7 @@ SECRET_KEY = '^(=k=mz_c-*)c(xl-^87($zm0$um+#!au+$1g+b&xw-(nkb%+^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "www.sudocool.com"]
+ALLOWED_HOSTS = ["localhost", "www.sudocool.com", "sudocool.com", "sudocool.herokuapp.com"]
 
 
 # Application definition

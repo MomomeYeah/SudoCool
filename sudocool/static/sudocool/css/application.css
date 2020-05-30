@@ -2,38 +2,67 @@
     margin-top: 1em;
 }
 
-div.sudocoolContainer {
-    margin: 0px;
-    padding: 0px;
-    display: inline-block;
+/* center sudocool board in main element */
+div.sudocool-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-div.sudocoolContainer > div.sudocoolTable {
-    margin: 0px;
-    padding: 0px;
-    display: inline-block;
-    min-width: 400px;
+/* Pure CSS aspect ratio: https://codepen.io/ItScofield/pen/PNVZoQ */
+div.sudocool-table-wrapper {
+    /* relative-positioned so child can be absolute, set to desired width */
+    position: relative;
+    width: min(100%, 740px);
+    min-width: 380px;
+}
+div.sudocool-table-wrapper::before {
+    /* set padding-top to 100%, meaning 100% of parent width */
+    /* this gives us a 1:1 aspect ratio */
+    content: "";
+    display: block;
+    padding-top: 100%;
 }
 
-div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow {
-    margin: 0px;
-    padding: 0px;
-    display: inline-block;
+div.sudocool-table {
+    /* black background to serve as grid lines */
+    background-color: black;
+
+    /* set up grid container with 9 rows / columns */
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+
+    /* set space between grid boxes */
+    --content-spacing: 2px;
+    column-gap: var(--content-spacing);
+    row-gap: var(--content-spacing);
+    padding: var(--content-spacing);
+
+    /* use absolute positioning to counteract parent padding */
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 
-div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol {
-    margin: 0px;
-    padding: 0px 1px 0px 0px;
-    display: inline-block;
-    float: left;
-}
+/* make each input element a perfect square, taking up all available space */
+input.sudocool-item {
+    box-sizing: border-box;
+    border: 0;
+    padding: 0;
+    margin: 0;
 
-div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.badCol {
-    border: 2px solid red;
-}
+    height: 100%;
+    width: 100%;
 
-div.sudocoolContainer > div.sudocoolTable > div.sudocoolRow > div.sudocoolCol > input {
-    margin: 0px;
-    padding: 0px;
     text-align: center;
+    font-size: 1.5em;
+}
+
+/* give invalid input a red border */
+input.sudocool-item.badCell {
+    border: 2px solid red;
 }

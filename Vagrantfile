@@ -8,6 +8,9 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.provision :shell, path: "Vagrant-setup/bootstrap.sh"
+  config.vm.provider "virtualbox" do |v|
+      v.name = "SudoCool"
+  end
   config.vm.network :forwarded_port, host: 18090, guest: 80
   config.vm.network :forwarded_port, host: 8090, guest: 8000
   config.vm.network :forwarded_port, host: 15432, guest: 5432

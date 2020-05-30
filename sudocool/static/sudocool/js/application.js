@@ -8,7 +8,7 @@ function populatePuzzle() {
     var puzzleString = $("#puzzleString").val();
     if(typeof puzzleString !== "undefined" && puzzleString !== '') {
         var puzzleItems = puzzleString.split(',');
-        var sudocoolCells = $(".sudocoolItem");
+        var sudocoolCells = $(".sudocool-item");
         $.each(sudocoolCells, function(i, value) {
             if(puzzleItems[i] != '0') {
                 $(this).val(puzzleItems[i]);
@@ -21,7 +21,7 @@ function populateSolution() {
     var solutionString = $("#solutionString").val();
     if(typeof solutionString !== "undefined" && solutionString !== '') {
         var solutionItems = solutionString.split(',');
-        var sudocoolCells = $(".sudocoolItem");
+        var sudocoolCells = $(".sudocool-item");
         $.each(sudocoolCells, function(i, value) {
             $(this).val(solutionItems[i]);
         })
@@ -33,14 +33,14 @@ $(document).ready(function() {
     populateSolution();
 
     $("#solveSudocoolForm").submit(function(event) {
-        $(this).find("div.sudocoolCol").removeClass("badCol");
+        $(this).find(".sudocool-item").removeClass("badCell");
 
         var sudocoolCells = new Array();
-        var cells = $(this).find(".sudocoolItem");
+        var cells = $(this).find(".sudocool-item");
         $.each(cells, function(i, value) {
             var cellData = $(value).val();
             if (!isValidSudokuNumber(cellData)) {
-                $(this).parent().addClass("badCol");
+                $(this).addClass("badCell");
                 event.preventDefault();
             }
             sudocoolCells[sudocoolCells.length] = cellData;
