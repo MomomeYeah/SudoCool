@@ -11,7 +11,7 @@ function populatePuzzle() {
         var sudocoolCells = $(".sudocool-item");
         $.each(sudocoolCells, function(i, value) {
             if(puzzleItems[i] != '0') {
-                $(this).val(puzzleItems[i]);
+                $(this).val(puzzleItems[i]).attr("readonly", "readonly");
             }
         })
     }
