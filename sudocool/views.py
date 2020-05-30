@@ -6,8 +6,11 @@ from sudocool.models import SudocoolBoard
 from sudocool.forms import SolveForm, GetPuzzleForm
 from sudocool.solve import *
 
+section_size = 3;
+num_sections = section_size**2;
+
 def index(request, puzzle = None):
-    context = {'range': range(9)}
+    context = {'range': range(num_sections)}
     if puzzle != None:
         context['puzzle'] = puzzle
     return render(request, 'sudocool/index.html', context)
@@ -26,7 +29,7 @@ def solution(request, sudocoolboard_id):
     b = board(sudocoolboard.sudocoolData)
     b.setupBoard()
     b.solveBoard()
-    return render(request, 'sudocool/solution.html', {'range': range(9), 'solution': b.printBoard()})
+    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': b.printBoard()})
 
 def puzzle(request):
     if request.method == 'POST':

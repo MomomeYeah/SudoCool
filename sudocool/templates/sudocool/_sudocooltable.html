@@ -1,9 +1,11 @@
 <div class="sudocool-table-wrapper">
     <div class="sudocool-table">
-        {% for i in range %}
-            {% for j in range %}
-                <input class="sudocool-item"/>
-            {% endfor %}
+        {% for section in range %}
+            <div class="sudocool-section">
+                {% for item in range %}
+                    <input class="sudocool-item"/>
+                {% endfor %}
+            </div>
         {% endfor %}
     </div>
 </div>

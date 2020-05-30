@@ -31,8 +31,8 @@ div.sudocool-table {
 
     /* set up grid container with 9 rows / columns */
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(9, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
 
     /* set space between grid boxes */
     --content-spacing: 2px;
@@ -48,10 +48,16 @@ div.sudocool-table {
     right: 0;
 }
 
+div.sudocool-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
 /* make each input element a perfect square, taking up all available space */
 input.sudocool-item {
     box-sizing: border-box;
-    border: 0;
+    border: 1px solid black;
     padding: 0;
     margin: 0;
 

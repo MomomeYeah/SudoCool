@@ -13,6 +13,7 @@
 * URL entry field should be URL type, i.e. .com button for mobile
 * Manual entry boxes should be number type
 * AJAX URL fetch
+* store original data used to create board, so solution can show boxes that were solved vs. provided
 
 # Backend
 
