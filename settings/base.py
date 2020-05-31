@@ -63,13 +63,11 @@ TEMPLATES = [
     },
 ]
 
-STATIC_FOUNDATION = os.path.join(os.path.join(BASE_DIR, 'static'), 'foundation')
-STATIC_SUDOCOOL = os.path.join(os.path.join(os.path.join(BASE_DIR, 'sudocool'), 'static'), 'sudocool')
+STATIC_PROJECT = os.path.join(BASE_DIR, "static")
+STATIC_SUDOCOOL = os.path.join(BASE_DIR, 'sudocool', 'static', 'sudocool')
 STATICFILES_DIRS = (
-    ('css', os.path.join(STATIC_FOUNDATION, 'css')),
-    ('css', os.path.join(STATIC_FOUNDATION, 'foundation-icons')),
-    ('js', os.path.join(STATIC_FOUNDATION, 'js')),
     ('css', os.path.join(STATIC_SUDOCOOL, 'css')),
+    ('js', os.path.join(STATIC_PROJECT, 'js')),
     ('js', os.path.join(STATIC_SUDOCOOL, 'js')),
 )
 

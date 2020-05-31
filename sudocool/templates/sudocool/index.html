@@ -1,29 +1,17 @@
 {% extends "SudoCool/base.html" %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-12 columns">
-            <form id="getSudokuForm" action="{% url 'sudocool:puzzle' %}" method="post">
-                <div class="row collapse">
-                    {% csrf_token %}
-                    <div class="small-11 columns">
-                        <input id="puzzleURL" name="puzzleURL" type="text" placeholder="Enter sudoku.com.au URL to get puzzle"/>
-                    </div>
-                    <div class="small-1 columns">
-                        <input type="submit" value="Get" class="button postfix"/>
-                    </div>
-                </div>
-            </form>
-            <form id="solveSudocoolForm" action="{% url 'sudocool:solve' %}" method="post">
-                <input type="hidden" id="puzzleString" value="{{ puzzle }}"/>
-                <div class="sudocool-container">
-                    {% include "sudocool/_sudocooltable.html" %}
-                    <br/>
-                    <br/>
-                    {% csrf_token %}
-                    <input type="submit" value="Solve" class="button"/>
-                </div>
-            </form>
+    <form id="getSudokuForm" action="{% url 'sudocool:puzzle' %}" method="post">
+        {% csrf_token %}
+        <input id="puzzleURL" name="puzzleURL" type="text" placeholder="Enter sudoku.com.au URL to get puzzle"/>
+        <input type="submit" value="Get" class="button"/>
+    </form>
+    <form id="solveSudocoolForm" action="{% url 'sudocool:solve' %}" method="post">
+        <input type="hidden" id="puzzleString" value="{{ puzzle }}"/>
+        <div class="sudocool-container">
+            {% include "sudocool/_sudocooltable.html" %}
+            {% csrf_token %}
+            <input type="submit" value="Solve" class="button"/>
         </div>
-    </div>
+    </form>
 {% endblock %}
