@@ -111,12 +111,25 @@ class sectionList(object):
         return len(unsolved_sections) == 0
 
 class squareList(object):
-    def __init__(self, sudocooldata):
+    def __init__(self, sudocooldata, by="row"):
         self.squares = []
-        i = 0
-        for val in sudocooldata.split(','):
-            self.squares.append(square(math.floor(i/9), i%9, val))
-            i += 1
+
+        if by == "row":
+            for i, val in enumerate(sudocooldata.split(',')):
+                self.squares.append(square(row=math.floor(i/9), col=i%9, value=val))
+        elif by == "section":
+            sudocooldata_values = sudocooldata.split(',')
+            for section in range(9):
+                start_index = section * 9
+                end_index = start_index + 9
+                sudocooldata_section = sudocooldata_values[start_index:end_index]
+
+                for i, val in enumerate(sudocooldata_section):
+                    row = math.floor(i / 3) + 3 * math.floor(section / 3)
+                    col = (i % 3) + 3 * (section % 3)
+
+                    self.squares.append(square(row=row, col=col, value=val))
+
     def removePossibility(self, row, col, section, possibility):
         for square in self.squares:
             if square.row == row or square.col == col or square.section == section:
@@ -134,8 +147,8 @@ class squareList(object):
                 square.removePossibility(possibility)
 
 class board(object):
-    def __init__(self, sudocooldata):
-        self.squareList = squareList(sudocooldata)
+    def __init__(self, sudocooldata, by="row"):
+        self.squareList = squareList(sudocooldata, by)
         self.rowList = rowList()
         self.colList = colList()
         self.sectionList = sectionList()
@@ -324,3 +337,14 @@ class board(object):
 
     def printBoard(self):
         return ",".join(str(s.value) for s in self.squareList.squares)
+
+    def printBoardBySection(self):
+        board_sections = []
+        for section in self.sectionList.sections:
+            section_squares = [
+                square for square in self.squareList.squares
+                if square.section == section.index]
+
+            board_sections.append(",".join(str(square.value) for square in section_squares))
+
+        return ",".join(board_section for board_section in board_sections)

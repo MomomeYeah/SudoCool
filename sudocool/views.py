@@ -12,7 +12,8 @@ num_sections = section_size**2;
 def index(request, puzzle = None):
     context = {'range': range(num_sections)}
     if puzzle != None:
-        context['puzzle'] = puzzle
+        b = board(puzzle)
+        context['puzzle'] = b.printBoardBySection()
     return render(request, 'sudocool/index.html', context)
 
 def solve(request):
@@ -26,10 +27,10 @@ def solve(request):
 
 def solution(request, sudocoolboard_id):
     sudocoolboard = get_object_or_404(SudocoolBoard, pk = sudocoolboard_id)
-    b = board(sudocoolboard.sudocoolData)
+    b = board(sudocoolboard.sudocoolData, by="section")
     b.setupBoard()
     b.solveBoard()
-    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': b.printBoard()})
+    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': b.printBoardBySection()})
 
 def puzzle(request):
     if request.method == 'POST':
