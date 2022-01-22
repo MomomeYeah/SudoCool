@@ -22,8 +22,9 @@ class BoardSolver():
         self.board.sectionList.removePossibility(square.section, possibility)
         self.board.squareList.solveAndRemovePossibility(square.row, square.col, square.section, possibility)
 
-    # If a cell has only one possibility, solve that cell
     def singleCandidate(self):
+        """If a cell has only one possibility, solve that cell"""
+
         found = False
         for square in self.board.squareList.squares:
             if not square.solved and len(square.possibilities) == 1:
@@ -31,46 +32,77 @@ class BoardSolver():
                 self.solveSquare(square, square.possibilities[0])
         return found
 
-    # For each possibility in each row/col/section, if there is only one cell in that row/col/section containing that possibility, solve that cell
     def singlePosition(self):
+        """
+        Solve single-position squares.
+
+        For each possibility in each row / column / section, if there is only
+        one cell in that row / column / section containing that possibility, then
+        that cell's value can only be that posibility"""
+
         found = False
-        for row in self.board.rowList.items:
-            for possibility in row.possibilities:
-                squares = [square for i, square in enumerate(self.board.squareList.squares) if square.row == row.index and square.hasPossibility(possibility)]
-                if len(squares) == 1:
-                    found = True
-                    self.solveSquare(squares[0], possibility)
-        for col in self.board.colList.items:
-            for possibility in col.possibilities:
-                squares = [square for i, square in enumerate(self.board.squareList.squares) if square.col == col.index and square.hasPossibility(possibility)]
-                if len(squares) == 1:
-                    found = True
-                    self.solveSquare(squares[0], possibility)
-        for section in self.board.sectionList.items:
-            for possibility in section.possibilities:
-                squares = [square for i, square in enumerate(self.board.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)]
-                if len(squares) == 1:
-                    found = True
-                    self.solveSquare(squares[0], possibility)
+        for collectionSet in [self.board.rowList, self.board.colList, self.board.sectionList]:
+            # for every row, column, or section
+            for collection in collectionSet.items:
+                # for each possibility remaining in the collection
+                for possibility in collection.possibilities:
+                    # find all squares with that possibility
+                    squares_with_possibility = [
+                        square for square in collection.squares
+                        if square.hasPossibility(possibility)]
+
+                    # if there is only one such square, solve the square
+                    if len(squares_with_possibility) == 1:
+                        found = True
+                        self.solveSquare(squares[0], possibility)
+
         return found
 
-    # For each possibility in each section, look at all cells in that section containing that possibility
-    # If all such cells fall on a single row or column, that row or column in that section must contain that possibility
-    # Therefore, we can remove that possibility from cells in the same row or column in other sections
     def candidateLine(self):
+        """Remove possibilities based on candidate line test.
+
+        For each possibility in each section, look at all cells in that section
+        containing that possibility. If all such cells fall on a single row or
+        column, that row or column in that section must contain that possibility.
+        Therefore, we can remove that possibility from cells in the same row or
+        column in other sections"""
+
         found = False
         for section in self.board.sectionList.items:
             for possibility in section.possibilities:
-                rows = set([square.row for i, square in enumerate(self.board.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
+                # get all squares in this section containing this possibility
+                section_squares_with_possibility = [
+                    square for square in section.squares
+                    if square.hasPossibility(possibility)]
+
+                # if they all fall on a single row, then remove the possibility
+                # from all other squares in the same row in different sections
+                rows = set(square.row for square in section_squares_with_possibility)
                 if len(rows) == 1:
-                    for remove_square in [square for i, square in enumerate(self.board.squareList.squares) if square.section != section.index and square.row in rows and square.hasPossibility(possibility)]:
+                    row = self.board.rowList.items[rows[0]]
+                    remove_squares = [
+                        square for square in row.squares
+                        if square.section != section.index
+                        and square.hasPossibility(possibility)
+                    ]
+                    for remove_square in remove_squares:
                         found = True
                         remove_square.removePossibility(possibility)
-                cols = set([square.col for i, square in enumerate(self.board.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
+
+                # if they all fall on a single col, then remove the possibility
+                # from all other squares in the same row in different sections
+                cols = set(square.col for square in section_squares_with_possibility)
                 if len(cols) == 1:
-                    for remove_square in [square for i, square in enumerate(self.board.squareList.squares) if square.section != section.index and square.col in cols and square.hasPossibility(possibility)]:
+                    col = self.board.colList.items[cols[0]]
+                    remove_squares = [
+                        square for square in col.squares
+                        if square.section != section.index
+                        and square.hasPossibility(possibility)
+                    ]
+                    for remove_square in remove_squares:
                         found = True
                         remove_square.removePossibility(possibility)
+
         return found
 
     # For each pair of sections in the same section-row or section-col, look at each possibility in turn that they have in common
