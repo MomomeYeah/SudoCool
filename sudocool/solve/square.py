@@ -43,5 +43,6 @@ class Square:
     def hasPossibility(self, possibility):
         return self.solved == False and possibility in self.possibilities
 
-    def hasPartialIntersect(self, possibilities):
-        return self.possibilities != possibilities and set(self.possibilities) & set(possibilities)
+    def hasPartialIntersect(self, square):
+        return self.possibilities != square.possibilities \
+            and set(self.possibilities) & set(square.possibilities)
