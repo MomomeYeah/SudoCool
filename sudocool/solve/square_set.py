@@ -37,6 +37,22 @@ class Section(SquareSet):
         self.rowIndex = int(math.floor(index / 3))
         self.colIndex = index % 3
 
+    def getRowsContainingPossibility(self, possibility):
+        """Get all rows in this section containing squares that have the given possibility"""
+
+        return set([
+            square.row for square in self.squares
+            if square.hasPossibility(possibility)
+        ])
+
+    def getColsContainingPossibility(self, possibility):
+        """Get all columns in this section containing squares that have the given possibility"""
+
+        return set([
+            square.col for square in self.squares
+            if square.hasPossibility(possibility)
+        ])
+
     def __str__(self):
         possibilities = ",".join(str(i) for i in self.possibilities)
         return "Index: {}, Row Index: {}, Column Index: {}, Possibilities: {}".format(

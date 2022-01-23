@@ -118,26 +118,62 @@ class BoardSolver():
 
         found = False
         for section in self.board.sectionList.items:
-            for test_section in [s for i, s in enumerate(self.board.sectionList.items) if s.rowIndex == section.rowIndex and s.colIndex != section.colIndex]:
-                cols = [section.colIndex, test_section.colIndex]
+            # for each section, get a list of sections in the same section-row
+            same_row_sections = [
+                test_section for test_section in self.board.sectionList.items
+                if test_section.rowIndex == section.rowIndex
+                and test_section.colIndex != section.colIndex
+            ]
+            for same_row_section in same_row_sections:
+                section_cols = [section.colIndex, same_row_section.colIndex]
                 for possibility in section.possibilities:
-                    s_rows = set([square.row for i, square in enumerate(self.board.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
-                    ts_rows = set([square.row for i, square in enumerate(self.board.squareList.squares) if square.section == test_section.index and square.hasPossibility(possibility)])
-                    if len(s_rows) == 2 and s_rows == ts_rows:
-                        for remove_sections in [s for i, s in enumerate(self.board.sectionList.items) if s.rowIndex == section.rowIndex and not s.colIndex in cols]:
-                            for remove_squares in [s for i, s in enumerate(self.board.squareList.squares) if s.section == remove_sections.index and s.row in s_rows and s.hasPossibility(possibility)]:
+                    section_possibility_rows = section.getRowsContainingPossibility(possibility)
+                    same_row_section_possibility_rows = same_row_section.getRowsContainingPossibility(possibility)
+
+                    if len(section_possibility_rows) == 2 and section_possibility_rows == same_row_section_possibility_rows:
+                        remove_sections = [
+                            remove_section for remove_section in self.board.sectionList.items
+                            if remove_section.rowIndex == section.rowIndex
+                            and remove_section.colIndex not in section_cols
+                        ]
+                        for remove_section in remove_sections:
+                            remove_squares = [
+                                square for square in remove_section.squares
+                                if square.row in section_possibility_rows
+                                and square.hasPossibility(possibility)
+                            ]
+                            for remove_square in remove_squares:
                                 found = True
-                                remove_squares.removePossibility(possibility)
-            for test_section in [s for i, s in enumerate(self.board.sectionList.items) if s.colIndex == section.colIndex and s.rowIndex != section.rowIndex]:
-                rows = [section.rowIndex, test_section.rowIndex]
+                                remove_square.removePossibility(possibility)
+
+            # for each section, get a list of sections in the same section-col
+            same_col_sections = [
+                test_section for test_section in self.board.sectionList.items
+                if test_section.colIndex == section.colIndex
+                and test_section.rowIndex != section.rowIndex
+            ]
+            for same_col_section in same_col_sections:
+                section_rows = [section.rowIndex, same_col_section.rowIndex]
                 for possibility in section.possibilities:
-                    s_cols = set([square.col for i, square in enumerate(self.board.squareList.squares) if square.section == section.index and square.hasPossibility(possibility)])
-                    ts_cols = set([square.col for i, square in enumerate(self.board.squareList.squares) if square.section == test_section.index and square.hasPossibility(possibility)])
-                    if len(s_cols) == 2 and s_cols == ts_cols:
-                        for remove_sections in [s for i, s in enumerate(self.board.sectionList.items) if s.colIndex == section.colIndex and not s.rowIndex in rows]:
-                            for remove_squares in [s for i, s in enumerate(self.board.squareList.squares) if s.section == remove_sections.index and s.col in s_cols and s.hasPossibility(possibility)]:
+                    section_possibility_cols = section.getColsContainingPossibility(possibility)
+                    same_col_section_possibility_cols = same_col_section.getColsContainingPossibility(possibility)
+
+                    if len(section_possibility_cols) == 2 and section_possibility_cols == same_col_section_possibility_cols:
+                        remove_sections = [
+                            remove_section for remove_section in self.board.sectionList.items
+                            if remove_section.colIndex == section.colIndex
+                            and remove_section.rowIndex not in section_rows
+                        ]
+                        for remove_section in remove_sections:
+                            remove_squares = [
+                                square for square in remove_section.squares
+                                if square.col in section_possibility_cols
+                                and square.hasPossibility(possibility)
+                            ]
+                            for remove_square in remove_squares:
                                 found = True
-                                remove_squares.removePossibility(possibility)
+                                remove_square.removePossibility(possibility)
+
         return found
 
     def nakedTuples(self):
