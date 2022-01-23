@@ -204,17 +204,24 @@ class BoardSolver():
                 found = self.nakedTuples()
 
     def guess(self):
-        unsolved_squares = [square for i, square in enumerate(self.board.squareList.squares) if not square.solved]
+        """Brute-force a solution to the board.
+
+        For each square that is not yet solved, pick a remaining possibility for
+        that square, and attempt to solve the rest of the board with that possibility
+        set. If this ultimately results in a solved board, then we're done.
+        Otherwise, move on to the next possibility and keep guessing."""
+
+        unsolved_squares = [square for square in self.board.squareList.squares if not square.solved]
         for square in unsolved_squares:
             for possibility in square.possibilities:
-                b_working = copy.deepcopy(self)
-                b_working.solveSquare(square, possibility)
-                if b_working.solve():
-                    self.solveSquare(square, possibility)
-                    return True
+                bs_working = copy.deepcopy(self)
+                bs_working.solveSquare(square, possibility)
+                if bs_working.solve():
+                    return bs_working.board
                 else:
                     square.removePossibility(possibility)
-        return False
+
+        return self.board
 
     def solve(self):
         self.solveRound()
@@ -224,9 +231,14 @@ class BoardSolver():
         elif self.board.inconsistent():
             return False
 
-        result = True
-        while result:
-            result = self.guess()
+        guessed_board = self.guess()
+        if guessed_board.inconsistent():
+            return False
+        elif not guessed_board.solved():
+            return False
+        else:
+            self.board = guessed_board
+            return True
 
     def __str__(self):
         ret_str = "\nRows:\n\n"

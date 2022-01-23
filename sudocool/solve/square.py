@@ -15,7 +15,7 @@ class Square:
         if value != None and value != '':
             self.value = int(value)
             self.solved = True
-            self.possibilities = None
+            self.possibilities = []
         else:
             self.value = ''
             self.solved = False
@@ -38,7 +38,7 @@ class Square:
     def solve(self, possibility):
         self.solved = True
         self.value = possibility
-        self.possibilities = None
+        self.possibilities = []
 
     def hasPossibility(self, possibility):
         return self.solved == False and possibility in self.possibilities

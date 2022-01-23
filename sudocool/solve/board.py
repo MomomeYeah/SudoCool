@@ -38,7 +38,12 @@ class Board():
         return len(unsolved_squares) > 0
 
     def printByRow(self):
-        return ",".join(str(s.value) for s in self.squareList.squares)
+        board_rows = []
+        for row in self.rowList.items:
+            row_squares = [str(square.value) for square in row.squares]
+            board_rows.append(",".join(row_squares))
+
+        return ",".join(board_row for board_row in board_rows)
 
     def printBySection(self):
         board_sections = []

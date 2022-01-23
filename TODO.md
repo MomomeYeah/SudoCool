@@ -18,6 +18,5 @@
 # Backend
 
 * solveBoard function works, but should return something after loop terminates.  What's the right return value?
-* We're doing way too much work - if we guess right that means we've solved the board, we should just return
 * Store separate board for each update or just list of increments?
 * Create puzzle with id/uuid for future reference

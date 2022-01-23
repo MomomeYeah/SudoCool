@@ -37,7 +37,7 @@ def solution(request, sudocoolboard_id):
     bs.solve()
 
     # render a response containing the solution
-    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': b.printBySection()})
+    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': bs.board.printBySection()})
 
 def puzzle(request):
     if request.method == 'POST':
