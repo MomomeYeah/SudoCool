@@ -1,6 +1,8 @@
-Django==1.11.28
+Django==4.0.1
 dj-database-url==0.3.0
 dj-static==0.0.6
 gunicorn==19.5.0
 psycopg2==2.8.4
+pytest==6.2.5
 requests==2.23.0
+typing==3.7.4.3

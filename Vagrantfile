@@ -6,7 +6,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "bento/ubuntu-20.04"
   config.vm.provision :shell, path: "Vagrant-setup/bootstrap.sh"
   config.vm.provider "virtualbox" do |v|
       v.name = "SudoCool"

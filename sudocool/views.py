@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 
 from sudocool.models import SudocoolBoard
 from sudocool.forms import SolveForm, GetPuzzleForm
-from sudocool.solve import *
+from sudocool.solve.board import Board
+from sudocool.solve.solver import BoardSolver
 
 section_size = 3;
 num_sections = section_size**2;
@@ -12,8 +13,9 @@ num_sections = section_size**2;
 def index(request, puzzle = None):
     context = {'range': range(num_sections)}
     if puzzle != None:
-        b = board(puzzle)
-        context['puzzle'] = b.printBoardBySection()
+        b = Board()
+        b.populateByRow(puzzle)
+        context['puzzle'] = b.printBySection()
     return render(request, 'sudocool/index.html', context)
 
 def solve(request):
@@ -27,10 +29,15 @@ def solve(request):
 
 def solution(request, sudocoolboard_id):
     sudocoolboard = get_object_or_404(SudocoolBoard, pk = sudocoolboard_id)
-    b = board(sudocoolboard.sudocoolData, by="section")
-    b.setupBoard()
-    b.solveBoard()
-    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': b.printBoardBySection()})
+
+    # generate Board for the given sudocoolboard, and solve it
+    b = Board()
+    b.populateBySection(sudocoolboard.sudocoolData)
+    bs = BoardSolver(b)
+    bs.solve()
+
+    # render a response containing the solution
+    return render(request, 'sudocool/solution.html', {'range': range(num_sections), 'solution': bs.board.printBySection()})
 
 def puzzle(request):
     if request.method == 'POST':
