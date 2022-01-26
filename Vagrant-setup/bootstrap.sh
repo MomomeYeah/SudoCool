@@ -99,18 +99,6 @@ sudo python3 /vagrant/manage.py migrate
 su vagrant << EOF
     cd /vagrant/ && npm install
 EOF
-
-# create super user
-echo "Creating superuser..."
-cat << EOF | python3 /vagrant/manage.py shell
-from django.contrib.auth.models import User
-from django.db import IntegrityError
-try:
-    User.objects.create_superuser('admin@foxopen.net', 'admin@foxopen.net', 'password12')
-except IntegrityError:
-    pass
-
-EOF
 echo "...done."
 
 # restart apache
